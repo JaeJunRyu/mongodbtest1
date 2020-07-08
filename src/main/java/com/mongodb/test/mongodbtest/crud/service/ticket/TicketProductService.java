@@ -6,5 +6,6 @@ public interface TicketProductService {
 
     String ticketProductInsert(TicketProductSaveRequestDto requestDto);
 
+    String customFindById(String id);
 
 }

@@ -19,15 +19,18 @@ import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @RequiredArgsConstructor
 @Configuration
+@EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*")  //basepackage 적용 안하면 톰캣 기동 안됨
 public class MongoDBConfiguration  {
 
     private final MongoMappingContext mongoMappingContext;
 
     private final String userName = "nateen";
-    private final String dataBase = "admin";
+//    private final String dataBase = "admin";
+    private final String dataBase = "ticket";
     private final String passWord = "123456a";
 
 

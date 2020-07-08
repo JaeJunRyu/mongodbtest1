@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 
 @Getter
 @NoArgsConstructor
@@ -25,6 +27,8 @@ public class TicketProduct extends BaseEntity {
     private Integer price;
 
     private String content;
+
+    private List<TicketProductList> ticketProductListList;
 
     public TicketProduct(Long seq, String productName, Integer price, String content) {
         this.seq = seq;
