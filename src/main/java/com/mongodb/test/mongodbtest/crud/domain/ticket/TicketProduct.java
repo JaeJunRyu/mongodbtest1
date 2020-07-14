@@ -1,6 +1,7 @@
 package com.mongodb.test.mongodbtest.crud.domain.ticket;
 
 import com.mongodb.test.mongodbtest.crud.domain.BaseEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "ticketProduct")
 public class TicketProduct extends BaseEntity {
 
@@ -29,6 +30,10 @@ public class TicketProduct extends BaseEntity {
     private String content;
 
     private List<TicketProductList> ticketProductListList;
+
+    public TicketProduct(Long seq) {
+        this.seq = seq;
+    }
 
     public TicketProduct(Long seq, String productName, Integer price, String content) {
         this.seq = seq;

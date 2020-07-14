@@ -6,6 +6,10 @@ public interface TicketProductService {
 
     String ticketProductInsert(TicketProductSaveRequestDto requestDto);
 
+    String findById(String id);
+
     String customFindById(String id);
+
+    String mongoTemplateFindById(String id);
 
 }

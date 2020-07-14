@@ -2,6 +2,7 @@ package com.mongodb.test.mongodbtest.crud.presentation.web;
 
 import com.mongodb.test.mongodbtest.crud.presentation.web.dto.CommandDto;
 import com.mongodb.test.mongodbtest.crud.presentation.web.dto.CommandInnerRequestDto;
+import com.mongodb.test.mongodbtest.objecttest.ProtectedTestDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,13 @@ public class CommandObjectController {
 
         System.out.println(commandInnerClass4.toString());
         return "";
+    }
+
+
+    public String protectedTest(){
+//        ProtectedTestDto protectedTestDto = new ProtectedTestDto();
+
+        return null;
     }
 
 }

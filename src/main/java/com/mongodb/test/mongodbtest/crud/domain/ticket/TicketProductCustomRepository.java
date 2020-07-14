@@ -4,4 +4,8 @@ public interface TicketProductCustomRepository {
 
     String customFindById(String id);
 
+    String mongoTemplateFindById(String id);
+
+
+
 }
