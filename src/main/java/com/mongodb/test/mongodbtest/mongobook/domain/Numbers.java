@@ -2,17 +2,19 @@ package com.mongodb.test.mongodbtest.mongobook.domain;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Getter
-@Document(collection = "myCollection")
+@Document(collection = "B")
 @ToString
-public class TestObj {
+public class Numbers {
 
-    private Integer x;
+    @Id
+    private String id;
 
-    public TestObj(Integer x) {
-        this.x = x;
-    }
+    private List<Integer> numbers;
 
 }

@@ -1,17 +1,12 @@
 package com.mongodb.test.mongodbtest.config;
 
-import com.mongodb.Block;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.connection.SslSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.core.MongoClientFactoryBean;
+import org.springframework.data.mongodb.MongoTransactionManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
@@ -24,7 +19,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @RequiredArgsConstructor
 @Configuration
 @EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*")  //basepackage 적용 안하면 톰캣 기동 안됨
-public class MongoDBConfiguration  {
+public class MongoDBConfiguration {
+
 
     private final MongoMappingContext mongoMappingContext;
 
@@ -48,7 +44,8 @@ public class MongoDBConfiguration  {
 //                .build();
 //        return MongoClients.create(mongoClientSettings);
 
-        return MongoClients.create("mongodb://localhost:27017");
+//        return MongoClients.create("mongodb://localhost:27017");
+        return MongoClients.create("mongodb://localhost:30001");
     }
 
     @Bean
@@ -69,6 +66,9 @@ public class MongoDBConfiguration  {
         return converter;
     }
 
-
+    @Bean
+    public MongoTransactionManager transactionManager() {
+        return new MongoTransactionManager(mongoDatabaseFactory());
+    }
 
 }
