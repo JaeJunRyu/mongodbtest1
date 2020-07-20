@@ -3,6 +3,7 @@ package com.mongodb.test.mongodbtest.config;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
@@ -16,13 +17,13 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@RequiredArgsConstructor
 @Configuration
 @EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*")  //basepackage 적용 안하면 톰캣 기동 안됨
 public class MongoDBConfiguration {
 
-
-    private final MongoMappingContext mongoMappingContext;
+//    private final MongoMappingContext mongoMappingContext;
+//    @Autowired
+//    private MongoMappingContext mongoMappingContext;
 
     private final String userName = "nateen";
 //    private final String dataBase = "admin";
@@ -61,9 +62,14 @@ public class MongoDBConfiguration {
     @Bean
     public MappingMongoConverter mappingMongoConverter() {
         DbRefResolver dbRefResolver = new DefaultDbRefResolver(mongoDatabaseFactory());
-        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext );
+        MappingMongoConverter converter = new MappingMongoConverter(dbRefResolver, mongoMappingContext() );
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return converter;
+    }
+
+    @Bean
+    public MongoMappingContext mongoMappingContext(){
+        return new MongoMappingContext();
     }
 
     @Bean

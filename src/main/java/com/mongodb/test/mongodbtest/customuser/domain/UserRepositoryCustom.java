@@ -4,7 +4,7 @@ import com.mongodb.test.mongodbtest.customuser.presentation.dto.CustomDto;
 
 import java.util.List;
 
-public interface CustomUserRepository {
+public interface UserRepositoryCustom {
 
 //    List<CustomUser> customMethod();
 
