@@ -1,26 +1,31 @@
 package com.mongodb.test.mongodbtest;
 
+import com.mongodb.test.mongodbtest.config.MongoDBConfiguration;
 import com.mongodb.test.mongodbtest.customuser.domain.User;
+import com.mongodb.test.mongodbtest.customuser.domain.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
-@ExtendWith(SpringExtension.class)
+//@ExtendWith(SpringExtension.class)
 //@SpringBootTest
-@DataMongoTest
+//@DataMongoTest
 //@EnableMongoRepositories(basePackageClasses = {UserRepositoryImpl.class})
 //@AutoConfigureDataMongo
-//@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+@Import(MongoDBConfiguration.class)
+@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 public class MongoTest {
 
-//    @Autowired
-//    private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private MongoOperations mongoOperations;
@@ -43,5 +48,14 @@ public class MongoTest {
     }
 
 
+    @Test
+    void test2(){
+//        userRepository.customInsert()
+
+    }
+
+
+
 
 }
+

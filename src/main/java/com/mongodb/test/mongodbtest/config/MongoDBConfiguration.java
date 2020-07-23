@@ -2,8 +2,6 @@ package com.mongodb.test.mongodbtest.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
@@ -18,7 +16,8 @@ import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*")  //basepackage 적용 안하면 톰캣 기동 안됨
+//@EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*",repositoryImplementationPostfix = "Impl")  //basepackage 적용 안하면 톰캣 기동 안됨
+@EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*" )  //basepackage 적용 안하면 톰캣 기동 안됨
 public class MongoDBConfiguration {
 
 //    private final MongoMappingContext mongoMappingContext;

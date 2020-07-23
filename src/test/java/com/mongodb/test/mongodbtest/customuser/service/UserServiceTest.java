@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 //통합 테스트
-@SpringBootTest
+@SpringBootTest(classes = MongoDBConfiguration.class)
 
 //단위 테스트
 //@Import(MongoDBConfiguration.class)
@@ -64,7 +64,7 @@ class UserServiceTest {
                 .endDate(LocalDateTime.of(2020, 8, 10, 13, 00, 00))
                 .build();
 
-        userService.customInsert(build);
+//        userService.customInsert(build);
     }
 
     @DisplayName("find by id test")

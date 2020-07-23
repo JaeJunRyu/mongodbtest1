@@ -26,6 +26,7 @@ public class UserService {
         return userRepository.customInsert(dto);
     }
 
+
     public void queryDslTest() {
 
         QUser qUser = new QUser("user");
