@@ -1,7 +1,11 @@
 package com.mongodb.test.mongodbtest.mongobook.aggregate;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.internal.operation.AggregateOperation;
+import com.mongodb.test.mongodbtest.aggregation.CustomAggregationOperation;
 import com.mongodb.test.mongodbtest.mongobook.MapReduce;
 import com.mongodb.test.mongodbtest.mongobook.aggregate.dto.AggregateResponseDto;
+import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +16,7 @@ import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Fields.field;
@@ -289,6 +292,7 @@ public class AggergateTest {
     @DisplayName("aggregate $lookup를 사용 해보기 - 첫번째 방법")
     void aggregateTest12(){
 
+        //        LookupOperation lookupOperation = LookupOperation.newLookup().from().localField().foreignField().as()
         final LookupOperation lookup = lookup("inventory", "item", "sku", "inventory_docs");
         Aggregation aggregation = Aggregation.newAggregation(lookup);
 
@@ -300,6 +304,211 @@ public class AggergateTest {
         }
     }
 
+
+    @Test
+    @DisplayName("aggregate $lookup를 사용 해보기 - 두번째 방법")
+    void aggregateTest13(){
+
+        final HashMap<String, Object> letMap = new HashMap<>();
+        letMap.put("order_item","$item");
+        letMap.put("order_qty","$ordered");
+
+        final HashMap<String, Object> projectMap = new HashMap<>();
+        projectMap.put("stock_item",0);
+        projectMap.put("_id",0);
+
+        final List<Document> documentList = Arrays.asList(
+                new Document("$match",
+                        new Document("$expr",
+                                new Document("$and", Arrays.asList(
+                                        new Document("$eq", Arrays.asList("$stock_item", "$$order_item")),
+                                        new Document("$gte", Arrays.asList("$instock", "$$order_qty"))
+                                )
+                                )
+                        )
+                )
+
+        );
+
+        final List<Document> pipelinelist = new ArrayList<>();
+        pipelinelist.addAll(documentList);
+        pipelinelist.add(new Document("$project",projectMap));
+
+        Aggregation aggregation1 = Aggregation.newAggregation( l ->
+                new Document("$lookup",
+                    new Document("from", "warehouses")
+                        .append("let", letMap )
+                        .append("pipeline",pipelinelist )
+                        .append("as", "stockdata")
+                ));
+
+        System.out.println(aggregation1);
+
+        final AggregationResults<HashMap> rating = mongoOperations.aggregate(aggregation1, "orders", HashMap.class);
+        final List<HashMap> mappedResults = rating.getMappedResults();
+
+        for (HashMap mappedResult : mappedResults) {
+            System.out.println(mappedResult);
+        }
+
+    }
+
+    @Test
+    @DisplayName("aggregate $replaceRoot를 사용 해보기")
+    void aggregateTest14(){
+        final UnwindOperation unwindOperation = unwind("$grades");
+        final MatchOperation matchOperation = match(Criteria.where("grades.grade").gte(90));
+        final ReplaceRootOperation replaceRootOperation = replaceRoot("$grades");
+
+        Aggregation aggregation1 = Aggregation.newAggregation(unwindOperation,matchOperation,replaceRootOperation);
+
+        final AggregationResults<HashMap> rating = mongoOperations.aggregate(aggregation1, "students", HashMap.class);
+        final List<HashMap> mappedResults = rating.getMappedResults();
+
+        for (HashMap mappedResult : mappedResults) {
+            System.out.println(mappedResult);
+        }
+
+//        {_id=1.0, grades={test=3.0, grade=95.0, mean=85.0, std=6.0}}
+//        {_id=2.0, grades={test=1.0, grade=90.0, mean=75.0, std=6.0}}
+//        {_id=2.0, grades={test=3.0, grade=91.0, mean=85.0, std=4.0}}
+
+//        {std=6.0, test=3.0, mean=85.0, grade=95.0}
+//        {std=6.0, test=1.0, mean=75.0, grade=90.0}
+//        {std=4.0, test=3.0, mean=85.0, grade=91.0}
+    }
+
+    @Test
+    @DisplayName("aggregate $sample를 사용 해보기")
+    void aggregateTest15(){
+
+        final SampleOperation sample = sample(3);
+
+        Aggregation aggregation1 = Aggregation.newAggregation(sample);
+
+        final AggregationResults<HashMap> rating = mongoOperations.aggregate(aggregation1, "rating", HashMap.class);
+        final List<HashMap> mappedResults = rating.getMappedResults();
+
+        for (HashMap mappedResult : mappedResults) {
+            System.out.println(mappedResult);
+        }
+    }
+
+
+    @Test
+    @DisplayName("aggregate $sortByCount를 사용 해보기")
+    void aggregateTest16(){
+
+        final SortByCountOperation sortByCountOperation = sortByCount("$rating");
+
+        Aggregation aggregation1 = Aggregation.newAggregation(sortByCountOperation);
+
+        final AggregationResults<HashMap> rating = mongoOperations.aggregate(aggregation1, "rating", HashMap.class);
+        final List<HashMap> mappedResults = rating.getMappedResults();
+
+        for (HashMap mappedResult : mappedResults) {
+            System.out.println(mappedResult);
+        }
+    }
+
+
+    @Test
+    void aggregationTest(){
+
+        Aggregation aggregation111 = Aggregation.newAggregation(
+                match(new Criteria()),
+                //lookup("users", "postedBy", "_id", "user")
+                new AggregationOperation() {
+                    @Override
+                    public Document toDocument(AggregationOperationContext context) {
+                        return new Document("$lookup",
+                                new Document("from", "users")
+                                        .append("let", new Document("postedBy", "$postedBy"))
+                                        .append("pipeline", Arrays.asList(
+                                                new Document("$match",
+                                                        new Document("$expr",
+                                                                new Document("$eq", Arrays.asList(
+                                                                        new Document("$toString", "$_id"),
+                                                                        "$$postedBy"
+                                                                ))))))
+                                        .append("as", "user"));
+                    }
+                },
+                unwind("$user"),
+                new AggregationOperation() {
+
+                    @Override
+                    public Document toDocument(AggregationOperationContext context) {
+                        return new Document("$addFields",
+                                new Document("id", new Document("$toString", "$_id"))
+                                        .append("username", "$user.name")
+                                        .append("upvotes", new Document("$size", "$upvotesBy"))
+                                        .append("isUpvoted", new Document("$in", Arrays.asList("", "$upvotesBy")))
+                                        .append("isPinned", new Document("$cond",
+                                                Arrays.asList(new Document("$gte",
+                                                        Arrays.asList(new Document("$size", "$upvotesBy"), 3)), Boolean.TRUE, Boolean.FALSE)))
+                                        .append("createdAt", new Document("$dateToString",
+                                                new Document("format", "%H:%M %d-%m-%Y")
+                                                        .append("timezone", "+01")
+                                                        .append("date", "$createdAt")
+                                        )));
+                    }
+                },
+                sort(Sort.Direction.DESC, "isPinned", "createdAt"),
+                project().andExclude("user", "_class")
+        );
+
+
+        final Document document1 = new Document("$lookup",
+                new Document("from", "users")
+                        .append("let", new Document("postedBy", "$postedBy"))
+                        .append("pipeline", Arrays.asList(
+                                new Document("$match",
+                                        new Document("$expr",
+                                                new Document("$eq", Arrays.asList(
+                                                        new Document("$toString", "$_id"),
+                                                        "$$postedBy"
+                                                ))))))
+                        .append("as", "user"));
+
+        final Document document2 = new Document("$lookup",
+                new Document("from", "users")
+                        .append("let", new Document("postedBy", "$postedBy"))
+                        .append("pipeline", Arrays.asList(
+                                new Document("$match",
+                                        new Document("$expr",
+                                                new Document("$eq", Arrays.asList(
+                                                        new Document("$toString", "$_id"),
+                                                        "$$postedBy"
+                                                ))))))
+                        .append("as", "user"));
+
+        List<Document> documentList = new LinkedList<>();
+        documentList.add(document1);
+        documentList.add(document2);
+
+        CustomAggregationOperation customAggregationOperation = new CustomAggregationOperation(documentList);
+
+        Aggregation aggregation = Aggregation.newAggregation(customAggregationOperation);
+
+
+        System.out.println(aggregation);
+
+        Aggregation aggregation1 = Aggregation.newAggregation( l -> new Document("$lookup",
+                new Document("from", "users")
+                        .append("let", new Document("postedBy", "$postedBy"))
+                        .append("pipeline", Arrays.asList(
+                                new Document("$match",
+                                        new Document("$expr",
+                                                new Document("$eq", Arrays.asList(
+                                                        new Document("$toString", "$_id"),
+                                                        "$$postedBy"
+                                                ))))))
+                        .append("as", "user")));
+
+        System.out.println(aggregation1);
+
+    }
 
 }
 
