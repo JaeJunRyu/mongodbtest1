@@ -4,8 +4,10 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.auditing.DateTimeProvider;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.DbRefResolver;
@@ -15,9 +17,14 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Optional;
+
 @Configuration
 //@EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*",repositoryImplementationPostfix = "Impl")  //basepackage 적용 안하면 톰캣 기동 안됨
 @EnableMongoRepositories(basePackages = "com.mongodb.test.mongodbtest.*" )  //basepackage 적용 안하면 톰캣 기동 안됨
+@EnableMongoAuditing(dateTimeProviderRef = "utcDateTimeProvider")
 public class MongoDBConfiguration {
 
 //    private final MongoMappingContext mongoMappingContext;
@@ -74,6 +81,12 @@ public class MongoDBConfiguration {
     @Bean
     public MongoTransactionManager transactionManager() {
         return new MongoTransactionManager(mongoDatabaseFactory());
+    }
+
+    @Bean
+    public DateTimeProvider utcDateTimeProvider() {
+//        return () -> Optional.of(LocalDateTime.now(ZoneOffset.UTC));
+        return () -> Optional.of(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
     }
 
 }

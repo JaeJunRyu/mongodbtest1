@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 //통합 테스트
-@SpringBootTest(classes = MongoDBConfiguration.class)
+//@SpringBootTest(classes = MongoDBConfiguration.class)
 
 //단위 테스트
 //@Import(MongoDBConfiguration.class)
@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 
 //embedded
 //@DataMongoTest(includeFilters = { @ComponentScan.Filter(Service.class), @ComponentScan.Filter(Component.class), @ComponentScan.Filter(Repository.class) })
+@SpringBootTest(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 class UserServiceTest {
 
     @Autowired

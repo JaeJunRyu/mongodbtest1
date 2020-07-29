@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -29,9 +30,10 @@ import static org.springframework.data.mongodb.core.query.Update.update;
 
 
 //맛있는 MongoDB 책 예제 실습
-@ContextConfiguration(classes = {MongoDBConfiguration.class})
-@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+//@ContextConfiguration(classes = {MongoDBConfiguration.class})
+//@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 //@DataMongoTest
+@SpringBootTest(properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration")
 class InsertTestTest {
 
     @Autowired

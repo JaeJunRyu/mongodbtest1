@@ -13,10 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.query.*;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -90,6 +88,24 @@ public class SelectTest  {
             System.out.println(userCol.toString());
         }
     }
+
+    @Test
+    @DisplayName("name이 jayjun인 건 조회 eq - basicQuery로 구현하기")
+    void select_test3_1(){
+
+//        Query query = new Query();
+//        query.addCriteria(
+//                where("name").is("jayjun")
+//        );
+
+        BasicQuery basicQuery = new BasicQuery("{ name : {$eq : 'jayjun'} }");
+        final List<UserCol> userCols = mongoOperations.find(basicQuery, UserCol.class);
+
+        for (UserCol userCol : userCols) {
+            System.out.println(userCol.toString());
+        }
+    }
+
 
     @Test
     @DisplayName("name이 jayjun이 아닌건 조회 ne")
